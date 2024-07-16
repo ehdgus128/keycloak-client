@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -403,6 +404,12 @@
                     </form>
                   </ul>
                 </li>
+                <div>
+                  <div th:if="${name == null}">
+                    <a href="#" class="btn btn-primary btn-round" style="margin-right: 10px;" data-bs-toggle="modal" data-bs-target="#registerModal">회원가입</a>
+                    <a href="http://172.30.1.94:8082/oauth2/authorization/external" class="btn btn-primary btn-round" style="margin-right: 10px;">로그인</a>
+                  </div>
+                </div>
                 <li class="nav-item topbar-icon dropdown hidden-caret">
                   <a
                     class="nav-link dropdown-toggle"
@@ -666,7 +673,7 @@
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="fw-bold" th:text="${name}"></span>
+                      <span class="fw-bold" th:text="${name != null ? name : '비회원'}"></span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -681,8 +688,8 @@
                             />
                           </div>
                           <div class="u-text">
-                            <h4 th:text="${name}"></h4>
-                            <p class="text-muted" th:text="${email}"></p>
+                            <h4 th:text="${name != null ? name : '비회원'}"></h4>
+                            <p class="text-muted" th:text="${name != null ? name : '비회원 이메일'}"></p>
                             <a
                               href="profile.html"
                               class="btn btn-xs btn-secondary btn-sm"
@@ -691,7 +698,7 @@
                           </div>
                         </div>
                       </li>
-                      <li>
+                      <li th:if="${name != null}">
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">My Profile</a>
                         <a class="dropdown-item" href="#">My Balance</a>
@@ -721,7 +728,8 @@
               </div>
               <div class="ms-md-auto py-2 py-md-0">
                 <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
-                <a href="#" class="btn btn-primary btn-round">Add Customer</a>
+                <a href="#" class="btn btn-label-info btn-round me-2">Add Customer</a>
+                <a href="http://172.30.1.132:8083" class="btn btn-primary btn-round">Move to Sub Client</a>
               </div>
             </div>
             <div class="row">
@@ -1556,6 +1564,63 @@
       </div>
       <!-- End Custom template -->
     </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="registerModalLabel">회원가입</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="registerForm">
+              <div class="form-group">
+                <label for="userId">ID</label>
+                <input type="text" class="form-control" id="userId" placeholder="Enter ID" required />
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter Password" required />
+              </div>
+              <div class="form-group">
+                <label for="userName">UserName</label>
+                <input type="text" class="form-control" id="userName" placeholder="Enter UserName" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter Email" required />
+              </div>
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" required />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" required />
+              </div>
+              <div class="form-group">
+                <label for="cpf">CPF</label>
+                <input type="text" class="form-control" id="cpf" placeholder="Enter CPF" required />
+              </div>
+              <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name" required />
+              </div>
+              <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" class="form-control" id="department" placeholder="Enter Department" required />
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-success">회원가입</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!--   Core JS Files   -->
     <script src="assets/js/core/jquery-3.7.1.min.js"></script>
     <script src="assets/js/core/popper.min.js"></script>
@@ -1592,6 +1657,49 @@
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     <script src="assets/js/setting-demo.js"></script>
     <script src="assets/js/demo.js"></script>
+    <script>
+      document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const formData = {
+          id: document.getElementById('userId').value,
+          hashPwd: document.getElementById('password').value,
+          username: document.getElementById('userName').value,
+          email: document.getElementById('email').value,
+          firstName: document.getElementById('firstName').value,
+          lastName: document.getElementById('lastName').value,
+          cpf: document.getElementById('cpf').value,
+          fullName: document.getElementById('fullName').value,
+          department: document.getElementById('department').value
+        };
+
+        fetch('/api/users/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.id) {
+            alert('회원가입 성공');
+            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.hide();
+            window.location.href = '/';
+          } else {
+            alert('회원가입 실패');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+
+      document.querySelector('#registerModal .btn-danger').addEventListener('click', function () {
+          window.location.href = '/';
+      });
+    </script>
     <script>
       $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
         type: "line",

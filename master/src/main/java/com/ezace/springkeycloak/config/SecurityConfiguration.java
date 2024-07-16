@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -49,9 +51,7 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/admin/**").hasRole("admin")
-                .requestMatchers("/unauthenticated", "/oauth2/**", "/unlockUser/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .csrf().disable()
                 .cors()
@@ -63,7 +63,7 @@ public class SecurityConfiguration {
                 .logout()
                 .logoutUrl("/logout")
                 .addLogoutHandler(customLogoutSuccessHandler)
-                .logoutSuccessUrl(loginUrl)  // 로그아웃 후 리디렉션 URL 설정
+                .logoutSuccessUrl("/")  // 로그아웃 후 리디렉션 URL 설정
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .and()
@@ -84,5 +84,10 @@ public class SecurityConfiguration {
     @Bean
     public SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new NullAuthenticatedSessionStrategy();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

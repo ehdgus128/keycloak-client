@@ -10,8 +10,8 @@ public class MainController {
     @Value("${keycloak.realm}")
     private String realm;
 
-    @GetMapping(path = "/main")
-    public String main() {
-        return "main";
+    @GetMapping(path = "/index")
+    public String index() {
+        return "index";
     }
 }

@@ -71,7 +71,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             request.getSession().setAttribute("name", user.getAttribute("name"));
             request.getSession().setAttribute("email", user.getAttribute("email"));
 
-            response.sendRedirect("/main");
+            response.sendRedirect("/");
         } else {
             response.sendRedirect("/login?error");
         }

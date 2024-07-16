@@ -2,16 +2,18 @@ package com.ezace.springkeycloak.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
+import java.io.IOException;
+
 @Configuration
 public class CustomLogoutSuccessHandler extends SecurityContextLogoutHandler {
 
-//    @Value("${logout-url}")
+    //    @Value("${logout-url}")
 //    private String logoutUrl;
-
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         // 기본 로그아웃 처리
@@ -26,7 +28,7 @@ public class CustomLogoutSuccessHandler extends SecurityContextLogoutHandler {
 
         // 추가 작업: 로그아웃 후 리디렉션
 //        try {
-//            // 서브 서버의 Security 로그아웃 실행
+//            // 서브 서버의 Spring Security 로그아웃 실행
 //            response.sendRedirect(logoutUrl);
 //        } catch (IOException e) {
 //            throw new RuntimeException(e);

@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 public class KeycloakConfigController {
 
-    @Value("${keycloak.server-url}")
+    @Value("${keycloak.auth-server-url}")
     private String keycloakUrl;
 
     @Value("${spring.security.oauth2.client.registration.external.client-id}")

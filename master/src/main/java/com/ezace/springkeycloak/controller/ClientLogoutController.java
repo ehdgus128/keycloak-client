@@ -15,10 +15,10 @@ import java.io.IOException;
 @RestController
 public class ClientLogoutController {
 
-    @PostMapping("/back-logout")
+    @PostMapping("/backchannel-logout")
     public ResponseEntity<Void> backChannelLogout(HttpServletRequest request, HttpServletResponse response) {
 
-        System.out.println("Post cookie 삭제============================================");
+        System.out.println("============================================ backChannelLogout ============================================");
 
         // Spring Security 로그아웃 처리를 위한 SecurityContextLogoutHandler 사용
         SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
@@ -38,17 +38,14 @@ public class ClientLogoutController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/front-logout")
+    @GetMapping("/frontchannel-logout")
     public void frontChannelLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        System.out.println("Get cookie 삭제============================================");
+        System.out.println("============================================ frontChannelLogout ============================================");
 
         // Spring Security 로그아웃 처리를 위한 SecurityContextLogoutHandler 사용
         SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-
-        // 세션 무효화
-        request.getSession().invalidate();
 
         response.sendRedirect("/logout");
     }

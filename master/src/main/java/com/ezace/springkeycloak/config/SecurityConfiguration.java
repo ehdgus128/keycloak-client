@@ -1,5 +1,6 @@
 package com.ezace.springkeycloak.config;
 
+import jakarta.servlet.http.HttpSession;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Value;

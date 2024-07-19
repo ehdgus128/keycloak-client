@@ -29,6 +29,8 @@ public class KeycloakLogoutController {
         String logoutUrl = String.format("%s/protocol/openid-connect/logout?id_token_hint=%s&post_logout_redirect_uri=%s",
                 keycloakUrl, idToken, redirectUri);
 
+        System.out.println("logoutUrl : " + logoutUrl);
+
         // Keycloak 로그아웃 URL로 리디렉션
         return "redirect:" + logoutUrl;
     }

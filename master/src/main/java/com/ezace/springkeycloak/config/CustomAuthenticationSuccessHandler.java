@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // 로그인 성공 후 사용자 정보 가져오기
         OAuth2User user = (OAuth2User) authentication.getPrincipal();
+
+        OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+
+        System.out.println("idToken : " + oidcUser.getIdToken().getTokenValue());
 
         // 클라이언트 등록 정보 가져오기
         ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId(realm);
@@ -70,6 +75,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             request.getSession().setAttribute("refreshToken", refreshTokenValue);
             request.getSession().setAttribute("name", user.getAttribute("name"));
             request.getSession().setAttribute("email", user.getAttribute("email"));
+            request.getSession().setAttribute("idToken", oidcUser.getIdToken().getTokenValue());
+
+            // 세션 ID를 가져와 출력
+            String sessionId = request.getSession().getId();
+            System.out.println("Session ID : " + sessionId);
+            System.out.println("accessTokenValue : " + accessTokenValue);
 
             response.sendRedirect("/");
         } else {

@@ -12,7 +12,7 @@ import java.io.IOException;
 @Configuration
 public class CustomLogoutSuccessHandler extends SecurityContextLogoutHandler {
 
-    //    @Value("${logout-url}")
+//    @Value("${logout-url}")
 //    private String logoutUrl;
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

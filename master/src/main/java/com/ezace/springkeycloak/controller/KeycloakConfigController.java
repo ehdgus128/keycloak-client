@@ -10,6 +10,9 @@ import java.util.Map;
 @RestController
 public class KeycloakConfigController {
 
+    @Value("${keycloak.realm}")
+    private String realm;
+
     @Value("${keycloak.auth-server-url}")
     private String keycloakUrl;
 
@@ -24,12 +27,14 @@ public class KeycloakConfigController {
 
         // 세션에서 refreshToken 가져오기
         String refreshToken = (String) session.getAttribute("refreshToken");
+        String idToken = (String) session.getAttribute("idToken");
+
 
         Map<String, String> config = new HashMap<>();
         config.put("keycloakUrl", keycloakUrl);
-        config.put("client_id", clientId);
-        config.put("client_secret", clientSecret);
+        config.put("realm", realm);
         config.put("refreshToken", refreshToken);
+        config.put("idToken", idToken);
 
         return config;
     }

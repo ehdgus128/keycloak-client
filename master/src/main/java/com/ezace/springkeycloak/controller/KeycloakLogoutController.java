@@ -25,7 +25,7 @@ public class KeycloakLogoutController {
         String idToken = (String) session.getAttribute("idToken");
 
         // 로그아웃 URL 생성
-        String redirectUri = "http://172.30.1.94:8082/logout";  // 실제 로그아웃 리디렉션 URI로 업데이트
+        String redirectUri = "http://172.30.1.92:8082/logout";  // 실제 로그아웃 리디렉션 URI로 업데이트
         String logoutUrl = String.format("%s/protocol/openid-connect/logout?id_token_hint=%s&post_logout_redirect_uri=%s",
                 keycloakUrl, idToken, redirectUri);
 

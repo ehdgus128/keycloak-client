@@ -6,12 +6,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainController {
-
-    @Value("${keycloak.realm}")
-    private String realm;
-
     @GetMapping(path = "/index")
     public String index() {
         return "index";
+    }
+    @GetMapping(path = "/user")
+    public String user() {
+        return "user";
+    }
+    @GetMapping(path = "/session")
+    public String session() {
+        return "session";
+    }
+    @GetMapping(path = "/log")
+    public String log() {
+        return "log";
+    }
+    @GetMapping(path = "/group")
+    public String group() {
+        return "group";
     }
 }

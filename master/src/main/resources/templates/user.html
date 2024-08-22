@@ -42,6 +42,22 @@
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="assets/css/demo.css" />
+
+    <style>
+        /* 테이블의 특정 열 텍스트를 가운데 정렬 */
+        #user-table th:nth-child(1),
+        #user-table th:nth-child(2),
+        #user-table th:nth-child(3),
+        #user-table th:nth-child(4),
+        #user-table th:nth-child(5),
+        #user-table th:nth-child(6),
+        #user-table td:nth-child(4),
+        #user-table td:nth-child(5),
+        #user-table td:nth-child(6) {
+            text-align: center;
+        }
+    </style>
+
 </head>
 <body>
 <div class="wrapper">
@@ -72,10 +88,10 @@
                                 <tr role="row">
                                     <th>ID</th>
                                     <th>Email</th>
-                                    <th>Name</th>
-                                    <th>Failures</th>
-                                    <th>Disabled</th>
-                                    <th>Lock Status</th>
+                                    <th>이름</th>
+                                    <th>로그인 실패 횟수</th>
+                                    <th>상태</th>
+                                    <th>가입일시</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -149,17 +165,68 @@
                 users.forEach(user => {
                     const row = document.createElement('tr');
 
+                    let date;
+                    try {
+                        // 타임스탬프가 밀리초 단위가 아닌 경우, 1000을 곱해 밀리초 단위로 변환
+                        if (user.createdTimestamp < 1000000000000) { // 초 단위라고 가정
+                            date = new Date(user.createdTimestamp * 1000);
+                        } else { // 밀리초 단위
+                            date = new Date(user.createdTimestamp);
+                        }
+
+                        if (isNaN(date.getTime())) {
+                            throw new Error("Invalid Date");
+                        }
+                    } catch (error) {
+                        console.error("Error converting timestamp:", error);
+                        date = "Invalid Date";
+                    }
+
+                    const koreanTime = date !== "Invalid Date" ? new Intl.DateTimeFormat('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    }).format(date) : "Invalid Date";
+
+                    let lockStatus = user.bruteForceStatus.disabled
+                        ? `<button onclick="unlockUser('${user.id}')" class="btn btn-warning">일시잠금해제</button>`
+                        : '정상';
+
                     row.innerHTML = `
                         <td>${user.username}</td>
                         <td>${user.email}</td>
                         <td>${user.firstName} ${user.lastName}</td>
                         <td>${user.bruteForceStatus.numFailures}</td>
-                        <td>${user.bruteForceStatus.disabled ? 'Yes' : 'No'}</td>
-                        <td>${user.bruteForceStatus.disabled ? 'Locked' : 'Unlocked'}</td>
+                        <td>${lockStatus}</td>
+                        <td>${koreanTime}</td>
                     `;
 
                     tableBody.appendChild(row);
                 });
+            }
+
+            function unlockUser(userId) {
+                console.log("unlockUser 함수 호출됨, userId:", userId);
+
+                fetch(`/api/users/unlockUser/${userId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        console.log("응답 상태 코드:", response.status);
+                        console.log("응답 본문:", response);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log("사용자 잠금 해제됨:", data);
+                        getUserInfo();
+                    })
+                    .catch(error => console.error('Error unlocking user:', error));
             }
 
             // 페이지 로드 시 getUserInfo 함수 실행

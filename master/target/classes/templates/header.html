@@ -385,3 +385,109 @@
     </nav>
     <!-- End Navbar -->
 </div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">회원가입</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="userId">ID</label>
+                        <input type="text" class="form-control" id="userId" placeholder="Enter ID" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter Password" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="userName">UserName</label>
+                        <input type="text" class="form-control" id="userName" placeholder="Enter UserName" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter Email" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" class="form-control" id="cpf" placeholder="Enter CPF" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <input type="text" class="form-control" id="department" placeholder="Enter Department" required />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">회원가입</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const formData = {
+            id: document.getElementById('userId').value,
+            hashPwd: document.getElementById('password').value,
+            username: document.getElementById('userName').value,
+            email: document.getElementById('email').value,
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            cpf: document.getElementById('cpf').value,
+            fullName: document.getElementById('fullName').value,
+            department: document.getElementById('department').value
+        };
+
+        fetch('/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                alert('회원가입 성공');
+                var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                registerModal.hide();
+                window.location.href = '/';
+            } else {
+                alert('회원가입 실패');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    document.querySelector('#registerModal .btn-danger').addEventListener('click', function () {
+        window.location.href = '/';
+    });
+
+
+    function confirmLogout() {
+        if (confirm("로그아웃 하시겠습니까?")) {
+            window.location.href = "/keycloak-logout";
+        }
+    }
+</script>
